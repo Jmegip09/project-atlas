@@ -38,15 +38,17 @@ Atlas expands that foundation into a broader platform focused on supply chain an
 ## Repository Structure
 
 ```text
+
 project-atlas/
-├── README.md
-├── ROADMAP.md
-├── WHY_ATLAS.md
-├── LEARNING_LOG.md
-├── CHANGELOG.md
-├── docs/
-├── sql/
-├── python/
-├── powerbi/
-├── images/
-└── tests/
+├── README.md                       # High-level overview, architecture diagram, & introduction
+└── docs/                           # Project documentation ecosystem
+    ├── BUSINESS_REQUIREMENTS.md
+    ├── CHANGELOG.md
+    ├── FUNCTIONAL_REQUIREMENTS.md
+    ├── LEARNING_LOG.md
+    ├── NON_FUNCTIONAL_REQUIREMENTS.md
+    ├── PRODUCT_VISION.md
+    ├── ROADMAP.md
+    ├── STAKEHOLDERS.md
+    ├── SUCCESS_METRICS.md
+    └── WHY_ATLAS.md
