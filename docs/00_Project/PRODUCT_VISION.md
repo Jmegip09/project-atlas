@@ -74,7 +74,7 @@ Project Atlas will be successful when it can:
 Version 1 will not include:
 
 - Real company data
-- Proprietary Disney, PepsiCo, or Coca-Cola processes
+- Proprietary of company's processes
 - Live production APIs
 - Machine learning forecasting
 - Mobile app integration
