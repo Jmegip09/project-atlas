@@ -1,39 +1,65 @@
-BR-001
+# Business Requirements Document (BRD)
 
-The company shall monitor inventory levels across all warehouses.
+This document defines the business needs that Project Atlas is designed to solve. Each business requirement is uniquely identified and is traceable to future functional requirements, database objects, dashboards, and implementation tasks.
 
-Business Value
+---
 
-Prevent stockouts.
+## ATLAS-BR-001 — Real-Time Multi-Warehouse Inventory Monitoring
 
-Priority
+### Business Requirement
+
+The platform shall provide real-time visibility into inventory quantities across all warehouse locations to support inventory planning, operational efficiency, and informed business decision-making.
+
+### Business Value
+
+- Reduce inventory stockouts
+- Improve inventory accuracy
+- Balance inventory across warehouses
+- Increase order fulfillment efficiency
+- Reduce manual inventory reporting
+
+### Business Owner
+
+Operations Manager
+
+### Priority
 
 High
 
-----------------------------
+### Success Metrics
 
-BR-002
+- Inventory accuracy ≥ 98%
+- Stockout rate < 2%
+- Inventory visibility across all warehouses
+- Executive inventory dashboard refreshes successfully
 
-The company shall track supplier delivery performance.
+### Implementation Notes
 
-Business Value
+This requirement will eventually include:
 
-Improve supplier accountability.
+- Inventory tracking
+- Warehouse inventory reporting
+- Operational dashboards
+- Inventory reconciliation logic
+- Executive KPI reporting
 
-Priority
+### Related Components
 
-High
+| Component | Status |
+|-----------|--------|
+| Functional Requirement | ATLAS-FR-001 *(Planned)* |
+| Database Tables | Inventory, Warehouses, Inventory Transactions *(Planned)* |
+| Dashboard | Warehouse Operations Dashboard *(Planned)* |
+| SQL Views | Inventory Summary View *(Planned)* |
+| Python ETL | Inventory Validation *(Planned)* |
 
-----------------------------
+---
 
-BR-003
+## Traceability
 
-The company shall calculate inventory valuation.
+This requirement supports:
 
-Business Value
-
-Improve financial visibility.
-
-Priority
-
-Medium
+- Inventory visibility
+- Warehouse performance
+- Executive reporting
+- Inventory reconciliation
