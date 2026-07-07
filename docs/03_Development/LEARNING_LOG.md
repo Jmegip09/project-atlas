@@ -60,6 +60,23 @@ Planned applications to Atlas:
 Use this format after each module or certification:
 
 ## Date
+# July 7, 2026
+
+## Git & Repository Workflow
+
+Today I configured Git locally within VS Code and completed my first full development workflow using Project Atlas.
+
+### Skills Applied
+
+- Configured Git user identity
+- Connected local repository to GitHub
+- Created and pushed commits using VS Code
+- Organized the repository into a modular enterprise-style structure
+- Continued establishing Atlas as a long-term engineering portfolio project
+
+### Reflection
+
+Today marked the transition from planning Atlas to actively developing it using professional software engineering practices. Going forward, all development will be tracked through Git, GitHub, milestones, issues, and versioned releases.
 
 ### Learning Source
 

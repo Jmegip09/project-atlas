@@ -57,6 +57,111 @@ Operational data collected throughout these activities is consolidated into dash
 # Core Business Events
 
 Project Atlas models the following operational events.
+---
+
+# Process Rules
+
+## Procurement Rules
+
+- Only active suppliers may receive new purchase orders.
+- A purchase order must have at least one purchase order line.
+- A purchase order cannot be marked as fully received until all ordered quantities have been received.
+- Cancelled purchase orders should not update inventory.
+
+## Receiving Rules
+
+- Inventory should only increase after receiving is completed.
+- A received quantity cannot exceed the ordered quantity without an approved exception.
+- Damaged or rejected inventory should not be added to available stock.
+- Partial receipts must remain tied to the original purchase order line.
+
+## Inventory Rules
+
+- Inventory quantity on hand cannot be negative.
+- Every inventory balance must belong to one warehouse and one product.
+- Every inventory movement should create a traceable transaction record.
+- Inventory transfers must decrease stock from the source warehouse and increase stock at the destination warehouse.
+
+## Cycle Count Rules
+
+- Cycle counts compare system quantity against counted quantity.
+- Variances must generate a discrepancy record.
+- Approved adjustments update inventory balances.
+- Adjustment reason codes are required for auditability.
+
+---
+
+# Process Exceptions
+
+Project Atlas should account for common operational exceptions, including:
+
+- Supplier delivers late.
+- Supplier delivers partial quantity.
+- Supplier delivers damaged goods.
+- Purchase order is cancelled.
+- Inventory is received into the wrong warehouse.
+- Inventory balance becomes inconsistent with transaction history.
+- Cycle count identifies missing or excess stock.
+- Product falls below safety stock level.
+- Warehouse transfer is delayed or incomplete.
+
+---
+
+# Process-to-Data Mapping
+
+| Business Event | Primary Tables / Future Tables | Reporting Impact |
+|---|---|---|
+| Purchase Order Created | suppliers, purchase_orders, purchase_order_lines | Open PO reporting, procurement trends |
+| Supplier Ships Order | shipments | In-transit inventory, supplier lead time |
+| Receiving Inspection | receiving | Receiving performance, late delivery analysis |
+| Inventory Storage | inventory_balances | Quantity on hand, stock availability |
+| Inventory Consumption | inventory_transactions | Usage trends, reorder planning |
+| Warehouse Transfer | inventory_transactions, warehouses | Transfer tracking, warehouse balancing |
+| Cycle Count | cycle_counts | Inventory accuracy, variance reporting |
+| Inventory Adjustment | inventory_adjustments | Discrepancy analysis, audit trail |
+| Business Reporting | SQL views, Power BI dashboards | Executive and operational KPIs |
+
+---
+
+# Key Business Questions Supported
+
+This process supports analysis of questions such as:
+
+- Which products are at risk of stockout?
+- Which suppliers deliver late most often?
+- Which warehouses have the highest inventory value?
+- Which products have the largest inventory discrepancies?
+- Which purchase orders are partially received?
+- Which warehouses are experiencing receiving bottlenecks?
+- How much inventory value is tied up by category?
+- Are inventory adjustments increasing over time?
+
+---
+
+# Version 1 Scope
+
+Version 1 will focus on:
+
+- Suppliers
+- Products
+- Warehouses
+- Purchase Orders
+- Purchase Order Lines
+- Receiving
+- Inventory Balances
+- Inventory Transactions
+- Cycle Counts
+- Inventory Adjustments
+- Power BI reporting requirements
+
+Version 1 will not include:
+
+- Live APIs
+- Real employer data
+- Machine learning forecasting
+- Full transportation management
+- Mobile app integration
+- Automated cloud deployment
 
 ## Event 1 — Purchase Order Created
 
