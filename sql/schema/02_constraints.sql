@@ -8,11 +8,10 @@
 -- ----------------------------------------------------------------------------
 -- UNIQUE CONSTRAINTS (Preventing Duplicate Data Records)
 -- ----------------------------------------------------------------------------
-ALTER TABLE suppliers ADD CONSTRAINT uq_supplier_name UNIQUE (supplier_name);
-ALTER TABLE products ADD CONSTRAINT uq_product_sku UNIQUE (sku);
-ALTER TABLE warehouses ADD CONSTRAINT uq_warehouse_code UNIQUE (warehouse_code);
-ALTER TABLE purchase_orders ADD CONSTRAINT uq_po_number UNIQUE (po_number);
-ALTER TABLE inventory_ledger ADD CONSTRAINT uq_warehouse_product UNIQUE (warehouse_id, product_id);
+ALTER TABLE inventory_balances ADD CONSTRAINT uq_warehouse_product UNIQUE (warehouse_id, product_id);
+ALTER TABLE inventory_balances ADD CONSTRAINT fk_balances_warehouse FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id) ON DELETE RESTRICT;
+ALTER TABLE inventory_balances ADD CONSTRAINT fk_balances_product FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT;
+ALTER TABLE inventory_balances ADD CONSTRAINT chk_qty_on_hand CHECK (quantity_on_hand >= 0);
 
 -- ----------------------------------------------------------------------------
 -- FOREIGN KEY CONSTRAINTS (Referential Integrity Guardrails)
@@ -47,6 +46,23 @@ ALTER TABLE inventory_ledger
     ADD CONSTRAINT fk_ledger_product 
     FOREIGN KEY (product_id) REFERENCES products(product_id) 
     ON DELETE RESTRICT;
+
+-- Link Receiving Events to Valid PO Lines
+ALTER TABLE receiving_transactions 
+    ADD CONSTRAINT fk_receiving_po_line 
+    FOREIGN KEY (po_line_id) REFERENCES purchase_order_lines(po_line_id) 
+    ON DELETE RESTRICT;
+
+-- Link Receiving Events to a Valid Warehouse Destination Node
+ALTER TABLE receiving_transactions 
+    ADD CONSTRAINT fk_receiving_warehouse 
+    FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id) 
+    ON DELETE RESTRICT;
+
+-- Prevent negative or zero transaction insertions
+ALTER TABLE receiving_transactions 
+    ADD CONSTRAINT chk_receiving_qty 
+    CHECK (quantity_received > 0);
 
 -- ----------------------------------------------------------------------------
 -- CHECK CONSTRAINTS (Enterprise Business Rules Validation)

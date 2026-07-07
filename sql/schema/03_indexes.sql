@@ -46,5 +46,5 @@ CREATE INDEX idx_pol_product_id
 
 -- High-impact Composite Index: Accelerates multi-facility inventory tracking 
 -- and real-time stock balance lookups across specific warehouse/product intersections
-CREATE INDEX idx_ledger_warehouse_product 
-    ON inventory_ledger(warehouse_id, product_id);
+CREATE INDEX idx_balances_warehouse_product 
+    ON inventory_balances(warehouse_id, product_id);

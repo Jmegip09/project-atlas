@@ -54,16 +54,24 @@ CREATE TABLE purchase_order_lines (
     po_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity_ordered INT NOT NULL,
-    quantity_received INT DEFAULT 0,
     unit_cost DECIMAL(10, 2) NOT NULL
 );
 
--- 6. INVENTORY LEDGER MASTER RECORDS
-CREATE TABLE inventory_ledger (
+-- 6. INVENTORY BALANCES MASTER RECORDS
+CREATE TABLE inventory_balances (
     inventory_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     warehouse_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity_on_hand INT DEFAULT 0,
     bin_location VARCHAR(20),
     last_count_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- 7. RECEIVING TRANSACTIONS (Granular Shipment Ingestion)
+CREATE TABLE receiving_transactions (
+    receiving_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    po_line_id INT NOT NULL,
+    warehouse_id INT NOT NULL,
+    quantity_received INT NOT NULL,
+    received_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    received_by_user VARCHAR(50) DEFAULT 'SYSTEM'
 );
