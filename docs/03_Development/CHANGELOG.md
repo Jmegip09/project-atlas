@@ -8,14 +8,44 @@ All notable changes to Project Atlas will be documented here.
 
 ### Added
 
-- Created Project Atlas repository.
-- Added `README.md`.
-- Added `ROADMAP.md`.
-- Added `WHY_ATLAS.md`.
-- Added `LEARNING_LOG.md`.
-- Added `CHANGELOG.md`.
+#### Repository Foundation
+- Created Project Atlas GitHub repository.
+- Established repository structure and documentation standards.
+- Configured project milestones, issues, and release strategy.
 
-### Vision Established
+#### Project Documentation
+- Added `README.md`
+- Added `WHY_ATLAS.md`
+- Added `ROADMAP.md`
+- Added `PRODUCT_VISION.md`
+- Added `LEARNING_LOG.md`
+- Added `CHANGELOG.md`
+
+#### Business Documentation
+- Added `BUSINESS_REQUIREMENTS.md`
+- Added `FUNCTIONAL_REQUIREMENTS.md`
+- Added `NON_FUNCTIONAL_REQUIREMENTS.md`
+- Added `STAKEHOLDERS.md`
+- Added `SUCCESS_METRICS.md`
+
+#### Architecture Documentation
+- Added `ARCHITECTURE.md`
+- Added `ERD.md`
+- Added `DATA_DICTIONARY.md`
+- Added `DECISIONS.md`
+
+#### Database Prototype
+- Added initial PostgreSQL schema prototype.
+- Introduced foundational entities:
+  - Suppliers
+  - Products
+  - Warehouses
+  - Purchase Orders
+  - Purchase Order Lines
+  - Inventory Balances
+- Renamed **Inventory Ledger** to **Inventory Balances** to better distinguish current stock levels from future transaction history.
+
+## Release Summary
 
 - **Objective:** Transform the CS-499 Inventory Management Capstone into an enterprise-style Supply Chain Intelligence Platform.
 - **Target Technology Stack:** PostgreSQL, Python (Pandas/ETL), Power BI, AWS Cloud, Snowflake, and dbt.
