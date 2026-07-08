@@ -48,3 +48,17 @@ CREATE INDEX idx_pol_product_id
 -- and real-time stock balance lookups across specific warehouse/product intersections
 CREATE INDEX idx_balances_warehouse_product 
     ON inventory_balances(warehouse_id, product_id);
+
+
+--- ----------------------------------------------------------------------------
+-- 4. EMPLOYEES AND DEPARTMENTS
+--- ----------------------------------------------------------------------------
+
+CREATE INDEX idx_employees_department
+ON employees(department_id);
+
+CREATE INDEX idx_employees_warehouse
+ON employees(warehouse_id);
+
+CREATE INDEX idx_departments_type
+ON departments(department_type);

@@ -97,3 +97,25 @@ ALTER TABLE purchase_order_lines ADD CONSTRAINT chk_received_vs_ordered
 -- Inventory Ledger Quantity Guardrails (Prevent negative physical inventory)
 ALTER TABLE inventory_ledger ADD CONSTRAINT chk_qty_on_hand 
     CHECK (quantity_on_hand >= 0);
+
+-- Employee & Department Rules
+
+ALTER TABLE employees
+ADD CONSTRAINT fk_employees_department
+FOREIGN KEY (department_id)
+REFERENCES departments(department_id)
+ON DELETE RESTRICT;
+
+ALTER TABLE employees
+ADD CONSTRAINT fk_employees_warehouse
+FOREIGN KEY (warehouse_id)
+REFERENCES warehouses(warehouse_id)
+ON DELETE SET NULL;
+
+ALTER TABLE employees
+ADD CONSTRAINT chk_employee_status
+CHECK (employee_status IN ('Active', 'Inactive', 'On Leave'));
+
+ALTER TABLE departments
+ADD CONSTRAINT chk_department_type
+CHECK (department_type IN ('Operations', 'Procurement', 'Inventory', 'Finance', 'IT', 'Executive', 'Support'));

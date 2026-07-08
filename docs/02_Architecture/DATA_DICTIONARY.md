@@ -119,6 +119,34 @@ Examples:
 
 ---
 
+## Table: departments
+
+| Column | Data Type | Description |
+|----------|-----------|-------------|
+| department_id | INT | Unique department identifier |
+| department_name | VARCHAR(100) | Department name |
+| department_type | VARCHAR(50) | Functional business area |
+| active_flag | BOOLEAN | Indicates whether the department is active |
+| created_at | TIMESTAMP | Record creation timestamp |
+
+---
+
+## Table: employees
+
+| Column | Data Type | Description |
+|----------|-----------|-------------|
+| employee_id | INT | Unique employee identifier |
+| employee_number | VARCHAR(25) | Unique employee number |
+| first_name | VARCHAR(75) | Employee first name |
+| last_name | VARCHAR(75) | Employee last name |
+| job_title | VARCHAR(100) | Employee job title |
+| department_id | INT | Associated department |
+| warehouse_id | INT | Assigned warehouse (if applicable) |
+| employee_status | VARCHAR(20) | Current employment status |
+| created_at | TIMESTAMP | Record creation timestamp |
+
+---
+
 # Procurement
 
 ## Table: purchase_orders
@@ -238,6 +266,37 @@ A physical storage location where inventory is received, stored, transferred, an
 ## Safety Stock
 
 The minimum quantity of inventory maintained to reduce stockout risk.
+
+---
+
+### Department
+
+A functional business unit responsible for specific operational activities within Atlas Distribution Company. Departments consume inventory, manage business processes, and support day-to-day operations.
+
+Examples include:
+
+- Operations
+- Engineering
+- Maintenance
+- Facilities
+- Information Technology (IT)
+- Procurement
+- Safety
+
+---
+
+### Employee
+
+An individual responsible for executing operational tasks within Atlas Distribution Company.
+
+Employees may participate in activities such as:
+
+- Purchasing inventory
+- Receiving shipments
+- Performing cycle counts
+- Managing warehouse operations
+- Investigating inventory discrepancies
+- Supporting procurement and inventory analysis
 
 ---
 

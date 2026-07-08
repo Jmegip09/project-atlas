@@ -76,3 +76,25 @@ CREATE TABLE receiving_transactions (
     received_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     received_by_user VARCHAR(50) DEFAULT 'SYSTEM'
 );
+
+-- 8. DEPARTMENTS MASTER
+CREATE TABLE departments (
+    department_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL UNIQUE,
+    department_type VARCHAR(50),
+    active_flag BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 9. EMPLOYEES MASTER
+CREATE TABLE employees (
+    employee_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    employee_number VARCHAR(25) NOT NULL UNIQUE,
+    first_name VARCHAR(75) NOT NULL,
+    last_name VARCHAR(75) NOT NULL,
+    job_title VARCHAR(100) NOT NULL,
+    department_id INT NOT NULL,
+    warehouse_id INT,
+    employee_status VARCHAR(20) DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
