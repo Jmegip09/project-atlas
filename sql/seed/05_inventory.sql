@@ -1,4 +1,4 @@
-INSERT INTO inventory_ledger (warehouse_id, product_id, quantity_on_hand, bin_location) VALUES
+INSERT INTO inventory_balances (warehouse_id, product_id, quantity_on_hand, bin_location) VALUES
 (1, 1, 450, 'BIN-A1-R1'),
 (1, 2, 85, 'BIN-A1-R2'),
 (1, 4, 25, 'BIN-TECH-01'),

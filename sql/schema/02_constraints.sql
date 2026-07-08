@@ -42,13 +42,13 @@ ALTER TABLE purchase_order_lines
     ON DELETE RESTRICT;
 
 -- Link Ledger Records to Valid Warehouse Node
-ALTER TABLE inventory_ledger 
+ALTER TABLE inventory_balances 
     ADD CONSTRAINT fk_ledger_warehouse 
     FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id) 
     ON DELETE RESTRICT;
 
 -- Link Ledger Records to Valid Product SKU
-ALTER TABLE inventory_ledger 
+ALTER TABLE inventory_balances
     ADD CONSTRAINT fk_ledger_product 
     FOREIGN KEY (product_id) REFERENCES products(product_id) 
     ON DELETE RESTRICT;
@@ -100,9 +100,6 @@ ALTER TABLE purchase_order_lines ADD CONSTRAINT chk_unit_cost
 ALTER TABLE purchase_order_lines ADD CONSTRAINT chk_received_vs_ordered 
     CHECK (quantity_received <= quantity_ordered);
 
--- Inventory Ledger Quantity Guardrails (Prevent negative physical inventory)
-ALTER TABLE inventory_ledger ADD CONSTRAINT chk_qty_on_hand 
-    CHECK (quantity_on_hand >= 0);
 
 -- Employee & Department Rules
 

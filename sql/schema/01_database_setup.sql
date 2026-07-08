@@ -4,14 +4,15 @@
 -- Description: Establishes base relational database tables and core columns.
 -- ============================================================================
 
+DROP TABLE IF EXISTS receiving_transactions CASCADE;
 DROP TABLE IF EXISTS purchase_order_lines CASCADE;
 DROP TABLE IF EXISTS purchase_orders CASCADE;
 DROP TABLE IF EXISTS inventory_balances CASCADE;
+DROP TABLE IF EXISTS employees CASCADE;
+DROP TABLE IF EXISTS departments CASCADE;
 DROP TABLE IF EXISTS warehouses CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS suppliers CASCADE;
-
-created_by_employee_id INT,
 
 
 -- 1. SUPPLIERS MASTER TABLE
@@ -46,9 +47,10 @@ CREATE TABLE purchase_orders (
     po_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     po_number VARCHAR(50) NOT NULL,
     supplier_id INT NOT NULL,
-    order_date DATE NOT NULL DEFAULT CURRENT_DATE,
+
     expected_delivery_date DATE,
-    po_status VARCHAR(20) DEFAULT 'Open'
+    po_status VARCHAR(20) DEFAULT 'Open',
+    created_by_employee_id INT
 );
 
 -- 5. PURCHASE ORDER LINES TRANSACTION DETAILS
@@ -57,6 +59,7 @@ CREATE TABLE purchase_order_lines (
     po_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity_ordered INT NOT NULL,
+    quantity_received INT NOT NULL DEFAULT 0,
     unit_cost DECIMAL(10, 2) NOT NULL
 );
 
@@ -77,7 +80,7 @@ CREATE TABLE receiving_transactions (
     warehouse_id INT NOT NULL,
     quantity_received INT NOT NULL,
     received_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    received_by_user VARCHAR(50) DEFAULT 'SYSTEM'
+   received_by_employee_id INT
 );
 
 -- 8. DEPARTMENTS MASTER

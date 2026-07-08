@@ -116,6 +116,13 @@ Responsibilities include:
 - Inventory state management
 - Performance optimization through indexing
 
+The operational database is organized into three logical data categories:
+
+- Master Data
+- Transaction Data
+- Analytical Data
+
+See: DATA_CLASSIFICATION.md
 ---
 
 # ETL Layer

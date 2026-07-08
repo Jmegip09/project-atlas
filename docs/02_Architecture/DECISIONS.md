@@ -380,3 +380,39 @@ Departments
 
 - Requires lifecycle status management
 - Queries should filter inactive records where appropriate
+
+---
+
+# ADR-010 — Layered Data Classification
+
+## Status
+
+Accepted
+
+## Date
+
+July 2026
+
+## Decision
+
+Project Atlas separates data into three logical categories:
+
+- Master Data
+- Transaction Data
+- Analytical Data
+
+## Context
+
+Enterprise ERP and analytics platforms distinguish between relatively static business entities, operational business events, and derived analytical information.
+
+Adopting this layered approach improves maintainability, supports ETL design, simplifies reporting, and establishes a clear separation of responsibilities across the platform.
+
+## Consequences
+
+### Positive
+
+- Cleaner database organization
+- Improved ETL design
+- Better reporting architecture
+- Easier future migration to dimensional modeling
+- Stronger alignment with enterprise data platforms

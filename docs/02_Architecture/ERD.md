@@ -29,6 +29,14 @@ The ERD has been designed to:
 
 The Project Atlas database is organized into the following logical groups:
 
+Master Data
+
+Procurement
+
+Inventory
+
+These entity groups are further classified according to the Project Atlas Data Classification Strategy.
+
 ## Master Data
 
 Reference information that changes infrequently.

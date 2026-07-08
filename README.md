@@ -79,6 +79,25 @@ The documentation is organized into four major areas:
 - Project
 - Business
 - Architecture
+
+Business Layer
+
+↓
+
+Master Data
+
+↓
+
+Transaction Data
+
+↓
+
+Analytical Data
+
+↓
+
+Power BI
+
 - Development
 
 Each document represents an artifact commonly produced during enterprise software and analytics projects.
