@@ -275,3 +275,108 @@ The Architecture Decision Records support:
 - Power BI Dashboards
 - Future Cloud Architecture
 - Long-term Project Governance
+
+---
+
+# ADR-008 — Employee-Based Auditability
+
+## Status
+
+Accepted
+
+## Date
+
+July 2026
+
+## Decision
+
+Operational tables will reference employees when recording key business actions.
+
+## Context
+
+Atlas should track not only what happened, but who performed the action. This supports accountability, auditability, process analysis, and operational reporting.
+
+## Examples
+
+- Purchase orders identify the employee who created them.
+- Receiving records identify the employee who received inventory.
+- Cycle counts identify the employee who performed the count.
+- Inventory adjustments identify the employee who approved or completed the adjustment.
+
+## Consequences
+
+### Positive
+
+- Improved audit trail
+- Better operational accountability
+- More realistic ERP-style design
+- Supports employee productivity and process reporting
+
+---
+
+# ADR-009 — Preserve Historical Business Records
+
+## Status
+
+Accepted
+
+## Date
+
+July 2026
+
+## Decision
+
+Operational entities that participate in historical business transactions will not be physically deleted from the database. Instead, records will be retained and managed through lifecycle status fields.
+
+## Context
+
+Enterprise Resource Planning (ERP) systems maintain historical records to preserve auditability, reporting accuracy, and regulatory compliance. Deleting employees or other operational entities can compromise the integrity of historical transactions and business analytics.
+
+Project Atlas follows this enterprise practice by using status fields to indicate whether a record is active rather than removing it from the database.
+
+## Examples
+
+Employees
+
+- Active
+- On Leave
+- Inactive
+- Retired
+
+Suppliers
+
+- Active
+- On Hold
+- Inactive
+
+Products
+
+- Active
+- Discontinued
+- Obsolete
+
+Warehouses
+
+- Active
+- Closed
+
+Departments
+
+- Active
+- Merged
+- Inactive
+
+## Consequences
+
+### Positive
+
+- Preserves complete business history
+- Supports auditability and compliance
+- Prevents orphaned historical records
+- Improves long-term reporting accuracy
+- Reflects common ERP design practices
+
+### Negative
+
+- Requires lifecycle status management
+- Queries should filter inactive records where appropriate

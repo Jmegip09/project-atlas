@@ -11,6 +11,9 @@ DROP TABLE IF EXISTS warehouses CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS suppliers CASCADE;
 
+created_by_employee_id INT,
+
+
 -- 1. SUPPLIERS MASTER TABLE
 CREATE TABLE suppliers (
     supplier_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -98,3 +101,5 @@ CREATE TABLE employees (
     employee_status VARCHAR(20) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+

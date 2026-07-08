@@ -23,6 +23,12 @@ ALTER TABLE purchase_orders
     FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id) 
     ON DELETE RESTRICT;
 
+ALTER TABLE purchase_orders
+ADD CONSTRAINT fk_purchase_orders_created_by_employee
+FOREIGN KEY (created_by_employee_id)
+REFERENCES employees(employee_id)
+ON DELETE SET NULL;
+
 -- Link PO Lines to Parent Header (Cascade deletes if a whole PO is canceled/dropped)
 ALTER TABLE purchase_order_lines 
     ADD CONSTRAINT fk_pol_po 
@@ -114,8 +120,16 @@ ON DELETE SET NULL;
 
 ALTER TABLE employees
 ADD CONSTRAINT chk_employee_status
-CHECK (employee_status IN ('Active', 'Inactive', 'On Leave'));
+CHECK (
+    employee_status IN (
+        'Active',
+        'On Leave',
+        'Inactive',
+        'Retired'
+    )
+);
 
 ALTER TABLE departments
 ADD CONSTRAINT chk_department_type
 CHECK (department_type IN ('Operations', 'Procurement', 'Inventory', 'Finance', 'IT', 'Executive', 'Support'));
+
