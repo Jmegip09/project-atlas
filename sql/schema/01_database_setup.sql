@@ -66,6 +66,7 @@ CREATE TABLE inventory_balances (
     bin_location VARCHAR(20),
     last_count_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- 7. RECEIVING TRANSACTIONS (Granular Shipment Ingestion)
 CREATE TABLE receiving_transactions (
     receiving_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
