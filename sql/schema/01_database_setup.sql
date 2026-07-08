@@ -85,7 +85,7 @@ CREATE TABLE departments (
     department_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     department_name VARCHAR(100) NOT NULL UNIQUE,
     department_type VARCHAR(50),
-    active_flag BOOLEAN DEFAULT TRUE,
+    department_status VARCHAR(20) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

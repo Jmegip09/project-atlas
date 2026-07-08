@@ -131,5 +131,14 @@ CHECK (
 
 ALTER TABLE departments
 ADD CONSTRAINT chk_department_type
-CHECK (department_type IN ('Operations', 'Procurement', 'Inventory', 'Finance', 'IT', 'Executive', 'Support'));
-
+CHECK (
+    department_type IN (
+        'Operations',
+        'Procurement',
+        'Inventory',
+        'Finance',
+        'IT',
+        'Executive',
+        'Support'
+    )
+);
