@@ -13,8 +13,8 @@ env/
 .pytest_cache/
 
 # Data outputs (generated, not source-controlled)
-python/etl/raw_data/
-python/etl/data_quality_log.csv
+data/raw/
+data/processed/
 
 # Postgres local data (if you ever run a local pg cluster from this repo)
 *.sql.log

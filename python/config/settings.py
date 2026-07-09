@@ -14,5 +14,7 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # File paths used across the pipeline
-RAW_DATA_DIR = "python/etl/raw_data"
-DATA_QUALITY_LOG_PATH = "python/etl/data_quality_log.csv"
+RAW_DATA_DIR = "data/raw"
+SAMPLE_DATA_DIR = "data/sample"
+PROCESSED_DATA_DIR = "data/processed"
+DATA_QUALITY_LOG_PATH = "data/processed/data_quality_log.csv"
