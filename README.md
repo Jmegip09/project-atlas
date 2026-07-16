@@ -10,11 +10,11 @@ Rather than treating my university capstone as a finished academic assignment, I
 
 # Project Status
 
-**Current Version:** v0.1.0
+**Current Version:** v0.5.0
 
-**Current Phase:** Business Analysis & Project Foundation
+**Current Phase:** ETL Pipeline Complete — Building Power BI Dashboards
 
-Current work focuses on defining the business processes, operational requirements, repository architecture, and database design before implementation begins.
+The database schema, purchase order pipeline, and receiving/inventory simulation are built, tested against a live PostgreSQL instance, and covered by an automated test suite that runs on every push via GitHub Actions. Current work is building the Power BI layer on top of the reporting views in `sql/views/`.
 
 ---
 
@@ -37,38 +37,97 @@ The platform will model:
 
 ---
 
-# Planned Technology Stack
+# Technology Stack
 
-| Layer | Technology |
-|---------|------------|
-| Database | PostgreSQL |
-| ETL | Python + Pandas |
-| Analytics | SQL |
-| Visualization | Power BI |
-| Version Control | Git & GitHub |
-| Cloud | AWS RDS |
-| Data Warehouse | Snowflake |
-| Analytics Engineering | dbt |
+| Layer | Technology | Status |
+|---------|------------|--------|
+| Database | PostgreSQL | Built |
+| ETL | Python + Pandas + SQLAlchemy | Built |
+| Testing / CI | pytest + GitHub Actions | Built |
+| Analytics | SQL | Built |
+| Visualization | Power BI | In progress |
+| Version Control | Git & GitHub | Built |
+| Cloud | AWS RDS | Planned |
+| Data Warehouse | Snowflake | Planned |
+| Analytics Engineering | dbt | Planned |
 
 ---
 
 # Core Business Questions
 
-Project Atlas is designed to answer questions such as:
+Each question below is answered by a specific, tested query -- not aspirational, these all run against real (synthetic) data today:
 
-- Which products are at risk of stockout?
-- Which suppliers consistently deliver late?
-- Which warehouses experience receiving bottlenecks?
-- Where are inventory discrepancies occurring?
-- Which purchase orders remain partially received?
-- What is the current inventory value by warehouse?
-- Which suppliers have the strongest delivery performance?
+| Business Question | Answered by |
+|---|---|
+| Which products are at risk of stockout? | `sql/queries/01_stockout_risk.sql` |
+| Which suppliers consistently deliver late? | `sql/queries/02_supplier_delivery_performance.sql` |
+| Which purchase orders remain partially received? | `sql/queries/03_open_purchase_orders.sql` |
+| Which warehouses experience receiving bottlenecks? | `sql/queries/04_receiving_bottlenecks.sql` |
+| Where are inventory discrepancies occurring? | `sql/queries/05_inventory_discrepancies.sql` |
 
 ---
 
 # Repository Structure
 
-(Project tree here)
+```
+project-atlas/
+├── sql/
+│   ├── schema/          # DDL: tables, constraints, indexes
+│   ├── migrations/      # Post-launch schema changes (001: receiving detail + inventory ledger)
+│   ├── seed/            # Master data (suppliers, products, warehouses, inventory)
+│   ├── queries/         # Analytical queries answering the business questions above
+│   └── views/           # Power BI-facing reporting views (vw_*)
+├── python/
+│   ├── config/          # DB settings, supplier/warehouse reliability profiles
+│   ├── etl/             # generate -> validate -> load pipeline (POs and receiving)
+│   ├── validation/      # Data quality rule checks + quality log generation
+│   ├── tests/           # pytest suite (17 tests, runs in CI)
+│   └── utils/           # DB connection helper
+├── .github/workflows/   # CI: runs pytest on every push
+└── docs/                 # Business requirements, architecture decisions, changelog
+```
+
+---
+
+# Getting Started
+
+Requires PostgreSQL and Python 3.12+.
+
+**1. Build the database:**
+```
+psql -d your_db -f sql/schema/01_database_setup.sql
+psql -d your_db -f sql/schema/02_constraints.sql
+psql -d your_db -f sql/schema/03_indexes.sql
+psql -d your_db -f sql/migrations/001_receiving_detail_and_inventory_ledger.sql
+psql -d your_db -f sql/seed/01_suppliers.sql
+psql -d your_db -f sql/seed/02_products.sql
+psql -d your_db -f sql/seed/03_warehouses.sql
+psql -d your_db -f sql/seed/05_inventory.sql
+```
+
+**2. Set up Python and configure `.env`:**
+```
+cd python
+pip install -r requirements.txt
+cp .env.example .env   # fill in your DB credentials
+```
+
+**3. Run the full pipeline:**
+```
+python -m etl.generate_data
+python -m validation.run_validation
+python -m etl.generate_receiving_raw
+python -m validation.run_receiving_validation
+python -m etl.load
+python -m etl.load_receiving
+```
+
+**4. Run the tests:**
+```
+pytest
+```
+
+All ETL steps are idempotent -- re-running them is safe and won't duplicate data.
 
 ---
 
@@ -106,16 +165,16 @@ Each document represents an artifact commonly produced during enterprise softwar
 
 # Roadmap
 
-Project Atlas will evolve through several major versions:
+Project Atlas evolves through several major versions:
 
-- Version 0.1 — Project Foundation
-- Version 0.2 — Business Design
-- Version 0.3 — Database Architecture
-- Version 0.4 — Data Generation
-- Version 0.5 — ETL Development
-- Version 0.6 — Power BI Dashboards
-- Version 0.7 — Cloud Deployment
-- Version 1.0 — Enterprise Analytics Platform
+- [x] Version 0.1 — Project Foundation
+- [x] Version 0.2 — Business Design
+- [x] Version 0.3 — Database Architecture
+- [x] Version 0.4 — Data Generation
+- [x] Version 0.5 — ETL Development (PO pipeline + receiving/inventory simulation, tested end-to-end, CI passing)
+- [ ] Version 0.6 — Power BI Dashboards *(in progress)*
+- [ ] Version 0.7 — Cloud Deployment
+- [ ] Version 1.0 — Enterprise Analytics Platform
 
 ---
 # Versioning
@@ -136,7 +195,7 @@ Example:
 
 Current Version:
 
-v0.1.0
+v0.5.0
 
 ---
 
