@@ -25,4 +25,4 @@ jobs:
 
       - name: Run pytest
         working-directory: python
-        run: pytest -q
+        run: python -m pytest -q
