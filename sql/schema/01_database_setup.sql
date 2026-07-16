@@ -48,6 +48,7 @@ CREATE TABLE purchase_orders (
     po_number VARCHAR(50) NOT NULL,
     supplier_id INT NOT NULL,
 
+    order_date DATE NOT NULL,
     expected_delivery_date DATE,
     po_status VARCHAR(20) DEFAULT 'Open',
     created_by_employee_id INT
@@ -104,5 +105,3 @@ CREATE TABLE employees (
     employee_status VARCHAR(20) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-

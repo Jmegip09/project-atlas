@@ -17,6 +17,10 @@ ALTER TABLE inventory_balances ADD CONSTRAINT chk_qty_on_hand CHECK (quantity_on
 -- FOREIGN KEY CONSTRAINTS (Referential Integrity Guardrails)
 -- ----------------------------------------------------------------------------
 
+-- Prevent duplicate PO numbers (matches ATLAS validators.py rule SCHEMA-uq_po_number)
+ALTER TABLE purchase_orders
+    ADD CONSTRAINT uq_po_number UNIQUE (po_number);
+
 -- Link Purchase Orders to a Valid Supplier
 ALTER TABLE purchase_orders 
     ADD CONSTRAINT fk_po_supplier 
