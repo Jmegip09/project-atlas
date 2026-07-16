@@ -10,8 +10,17 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
+# "prefer" works for both local Postgres (usually no SSL configured -- falls
+# back to plain) and cloud Postgres like Neon/RDS (SSL available -- uses it).
+# Override in .env with DB_SSLMODE=require if you want to hard-fail instead
+# of silently falling back to an unencrypted connection.
+DB_SSLMODE = os.environ.get("DB_SSLMODE", "prefer")
+
 # SQLAlchemy connection string
-DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = (
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    f"?sslmode={DB_SSLMODE}"
+)
 
 # File paths used across the pipeline
 RAW_DATA_DIR = "data/raw"
