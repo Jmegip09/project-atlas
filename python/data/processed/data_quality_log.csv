@@ -1,0 +1,29 @@
+record_id,rule_id,field,value,description
+PO-2026-1010,ATLAS-RULE-001,supplier_name,,Purchase order has no supplier reference.
+PO-2026-1027,ATLAS-RULE-001,supplier_name,Nonexistent Vendor LLC,Supplier name does not match any known supplier in master data.
+PO-2026-1009,SCHEMA-chk_delivery_date,expected_delivery_date,2026-04-21 00:00:00,Expected delivery date is before the order date.
+PO-2026-1000:PROD-SKU-1001,SCHEMA-chk_quantity_positive,quantity_ordered,-372,Quantity ordered is negative.
+PO-2026-1003:PROD-SKU-1002,SCHEMA-chk_quantity_positive,quantity_ordered,-246,Quantity ordered is negative.
+PO-2026-1029:PROD-SKU-1002,SCHEMA-chk_quantity_positive,quantity_ordered,-409,Quantity ordered is negative.
+PO-2026-1038:PROD-SKU-2001,SCHEMA-chk_quantity_positive,quantity_ordered,-164,Quantity ordered is negative.
+PO-2026-1039:PROD-SKU-2001,SCHEMA-chk_quantity_positive,quantity_ordered,-430,Quantity ordered is negative.
+PO-2026-1000:PROD-SKU-1001,SCHEMA-chk_received_vs_ordered,quantity_received,323,Quantity received exceeds quantity ordered.
+PO-2026-1002:PROD-SKU-4001,SCHEMA-chk_received_vs_ordered,quantity_received,205,Quantity received exceeds quantity ordered.
+PO-2026-1003:PROD-SKU-1002,SCHEMA-chk_received_vs_ordered,quantity_received,63,Quantity received exceeds quantity ordered.
+PO-2026-1005:PROD-SKU-1002,SCHEMA-chk_received_vs_ordered,quantity_received,104,Quantity received exceeds quantity ordered.
+PO-2026-1013:PROD-SKU-3001,SCHEMA-chk_received_vs_ordered,quantity_received,415,Quantity received exceeds quantity ordered.
+PO-2026-1022:PROD-SKU-1001,SCHEMA-chk_received_vs_ordered,quantity_received,438,Quantity received exceeds quantity ordered.
+PO-2026-1029:PROD-SKU-1002,SCHEMA-chk_received_vs_ordered,quantity_received,0,Quantity received exceeds quantity ordered.
+PO-2026-1038:PROD-SKU-2001,SCHEMA-chk_received_vs_ordered,quantity_received,3,Quantity received exceeds quantity ordered.
+PO-2026-1039:PROD-SKU-2001,SCHEMA-chk_received_vs_ordered,quantity_received,33,Quantity received exceeds quantity ordered.
+PO-2026-1010:PROD-SKU-9999,FK-product_sku,sku,PROD-SKU-9999,SKU does not match any known product in master data.
+PO-2026-1014:PROD-SKU-9999,FK-product_sku,sku,PROD-SKU-9999,SKU does not match any known product in master data.
+PO-2026-1014:PROD-SKU-9999,FK-product_sku,sku,PROD-SKU-9999,SKU does not match any known product in master data.
+PO-2026-1016:PROD-SKU-9999,FK-product_sku,sku,PROD-SKU-9999,SKU does not match any known product in master data.
+PO-2026-1017:PROD-SKU-9999,FK-product_sku,sku,PROD-SKU-9999,SKU does not match any known product in master data.
+PO-2026-1020:PROD-SKU-9999,FK-product_sku,sku,PROD-SKU-9999,SKU does not match any known product in master data.
+PO-2026-1014:PROD-SKU-1001,SCHEMA-chk_unit_cost,unit_cost,0.0,Unit cost is zero or negative.
+PO-2026-1018:PROD-SKU-2001,SCHEMA-chk_unit_cost,unit_cost,0.0,Unit cost is zero or negative.
+PO-2026-1021:PROD-SKU-4001,SCHEMA-chk_unit_cost,unit_cost,0.0,Unit cost is zero or negative.
+PO-2026-1028:PROD-SKU-1001,SCHEMA-chk_unit_cost,unit_cost,0.0,Unit cost is zero or negative.
+PO-2026-1032:PROD-SKU-2001,SCHEMA-chk_unit_cost,unit_cost,0.0,Unit cost is zero or negative.

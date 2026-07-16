@@ -1,0 +1,4 @@
+record_id,rule_id,field,value,description
+PO-2026-1036:PROD-SKU-1002:1,SCHEMA-chk_receiving_quality_breakdown,quantity_received,79,Accepted + damaged + rejected does not equal quantity received.
+PO-2026-1036:PROD-SKU-4001:1,FK-warehouse_code,warehouse_code,WH-XXX-99,Warehouse code does not match any known warehouse.
+PO-2026-1039:PROD-SKU-1002:1,FK-warehouse_code,warehouse_code,WH-XXX-99,Warehouse code does not match any known warehouse.

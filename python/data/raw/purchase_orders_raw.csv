@@ -1,0 +1,41 @@
+po_number,supplier_name,order_date,expected_delivery_date,po_status
+PO-2026-1000,Apex Logistics Group,2026-06-18,2026-06-24,Fully Received
+PO-2026-1001,Apex Logistics Group,2026-04-27,2026-05-04,Open
+PO-2026-1002,Apex Logistics Group,2026-04-19,2026-04-23,Open
+PO-2026-1003,Apex Logistics Group,2026-06-27,2026-07-16,Partially Received
+PO-2026-1004,Beacon Packaging Corp,2026-05-13,2026-06-02,Partially Received
+PO-2026-1005,Apex Logistics Group,2026-05-10,2026-05-21,Partially Received
+PO-2026-1006,Titan Industrial Supply,2026-05-08,2026-05-21,Partially Received
+PO-2026-1007,Apex Logistics Group,2026-04-30,2026-05-13,Open
+PO-2026-1008,Titan Industrial Supply,2026-06-27,2026-07-11,Fully Received
+PO-2026-1009,Apex Logistics Group,2026-04-26,2026-04-21,Cancelled
+PO-2026-1010,,2026-06-21,2026-07-05,Open
+PO-2026-1011,Apex Logistics Group,2026-06-27,2026-07-09,Partially Received
+PO-2026-1012,Titan Industrial Supply,2026-07-12,2026-07-27,Cancelled
+PO-2026-1013,Global Core Manufacturing,2026-06-08,2026-06-22,Fully Received
+PO-2026-1014,Apex Logistics Group,2026-04-25,2026-05-06,Partially Received
+PO-2026-1015,Global Core Manufacturing,2026-06-13,2026-06-23,Cancelled
+PO-2026-1016,Global Core Manufacturing,2026-05-27,2026-06-16,Fully Received
+PO-2026-1017,Global Core Manufacturing,2026-04-20,2026-04-24,Open
+PO-2026-1018,Titan Industrial Supply,2026-04-19,2026-05-04,Open
+PO-2026-1019,Titan Industrial Supply,2026-04-26,2026-05-17,Partially Received
+PO-2026-1020,Beacon Packaging Corp,2026-05-08,2026-05-23,Partially Received
+PO-2026-1021,Titan Industrial Supply,2026-05-09,2026-05-19,Cancelled
+PO-2026-1022,Titan Industrial Supply,2026-06-05,2026-06-20,Partially Received
+PO-2026-1023,Beacon Packaging Corp,2026-06-14,2026-06-21,Open
+PO-2026-1024,Global Core Manufacturing,2026-04-19,2026-04-25,Partially Received
+PO-2026-1025,Apex Logistics Group,2026-06-10,2026-06-26,Cancelled
+PO-2026-1026,Titan Industrial Supply,2026-05-06,2026-05-23,Open
+PO-2026-1027,Nonexistent Vendor LLC,2026-06-25,2026-07-01,Fully Received
+PO-2026-1028,Beacon Packaging Corp,2026-06-19,2026-06-27,Open
+PO-2026-1029,Global Core Manufacturing,2026-06-24,2026-07-05,Open
+PO-2026-1030,Global Core Manufacturing,2026-06-08,2026-06-20,Partially Received
+PO-2026-1031,Apex Logistics Group,2026-05-27,2026-06-04,Fully Received
+PO-2026-1032,Titan Industrial Supply,2026-05-08,2026-05-14,Fully Received
+PO-2026-1033,Apex Logistics Group,2026-05-30,2026-06-09,Open
+PO-2026-1034,Global Core Manufacturing,2026-06-13,2026-06-18,Partially Received
+PO-2026-1035,Global Core Manufacturing,2026-05-14,2026-06-03,Fully Received
+PO-2026-1036,Global Core Manufacturing,2026-07-04,2026-07-20,Partially Received
+PO-2026-1037,Titan Industrial Supply,2026-07-10,2026-07-25,Cancelled
+PO-2026-1038,Apex Logistics Group,2026-04-17,2026-05-04,Partially Received
+PO-2026-1039,Apex Logistics Group,2026-06-29,2026-07-12,Partially Received
