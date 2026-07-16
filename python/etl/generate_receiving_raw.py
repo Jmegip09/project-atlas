@@ -1,19 +1,25 @@
 """
 Generates a raw, source-system-style receiving event extract, DERIVED from
-purchase order lines already loaded in the database -- never invented
-independently. This mirrors how a real WMS/EDI receiving feed would look:
-natural keys only, denormalized (order_date/warehouse_code carried along
-as a real extract would), and a deliberate percentage of messy/defective
-rows for the validator to catch downstream.
+purchase order lines -- never invented independently. This mirrors how a
+real WMS/EDI receiving feed would look: natural/business keys only (no
+internal DB IDs -- same convention as generate_data.py), denormalized
+(order_date/warehouse_code carried along as a real extract would), and a
+deliberate percentage of messy/defective rows for the validator to catch
+downstream.
 
-Flow per PO line with quantity_received > 0:
+Reads directly from the raw PO CSVs + data quality log -- no database
+required for this stage. po_number/sku are resolved to real po_line_id
+only later, at load_receiving.py time, same as how load.py resolves
+supplier_name/sku to surrogate IDs only at its own load time.
+
+Flow per clean PO line with quantity_received > 0:
     PO line's recorded quantity_received becomes the TOTAL accepted units
     across 1-2 receiving events (supplier_profiles decide split odds).
     Each event's gross quantity_received = accepted + damaged + rejected,
     so a shipment can show MORE units physically arriving at the dock than
     ultimately went into sellable inventory.
 
-Run AFTER load.py (needs real po_line_id / supplier / date data in the DB):
+Run AFTER run_validation.py (needs the PO quality log to know what's clean):
     python -m python.etl.generate_receiving_raw
 """
 import csv
@@ -28,7 +34,7 @@ from config.profiles import (
     WAREHOUSE_PROFILES, DEFAULT_WAREHOUSE_PROFILE,
 )
 from config.settings import RAW_DATA_DIR
-from utils.db import get_engine
+from etl.clean_rows import load_raw_po_data, get_clean_po_lines
 
 random.seed(42)
 
@@ -37,19 +43,22 @@ WAREHOUSE_CODES = list(WAREHOUSE_PROFILES.keys())
 
 
 def fetch_source_lines():
-    """PO lines with an actual receipt, plus everything needed to simulate one."""
-    engine = get_engine()
-    query = """
-        SELECT po.po_number, p.sku, pol.po_line_id, pol.quantity_received AS total_accepted,
-               po.order_date, po.expected_delivery_date, s.supplier_name
-        FROM purchase_order_lines pol
-        JOIN purchase_orders po ON po.po_id = pol.po_id
-        JOIN products p ON p.product_id = pol.product_id
-        JOIN suppliers s ON s.supplier_id = po.supplier_id
-        WHERE pol.quantity_received > 0
-        ORDER BY po.po_number, p.sku
-    """
-    return pd.read_sql(query, engine)
+    """Clean PO lines with an actual receipt, plus everything needed to simulate one.
+    Sourced entirely from the raw CSVs + quality log -- no DB round-trip."""
+    headers_df, lines_df, issues_df = load_raw_po_data()
+    clean_headers, clean_lines = get_clean_po_lines(headers_df, lines_df, issues_df)
+
+    merged = clean_lines.merge(
+        clean_headers[["po_number", "order_date", "expected_delivery_date", "supplier_name"]],
+        on="po_number", how="inner",
+    )
+    merged["order_date"] = pd.to_datetime(merged["order_date"])
+    merged["expected_delivery_date"] = pd.to_datetime(merged["expected_delivery_date"])
+    merged = merged.rename(columns={"quantity_received": "total_accepted"})
+    merged = merged[merged["total_accepted"] > 0]
+
+    return merged[["po_number", "sku", "total_accepted", "order_date",
+                    "expected_delivery_date", "supplier_name"]]
 
 
 def pick_warehouse(rng_choice_pool):

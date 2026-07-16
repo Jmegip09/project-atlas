@@ -3,7 +3,9 @@ Loads clean purchase order data from the raw CSVs into PostgreSQL.
 
 This is the last stage of the pipeline: generate_data.py produces raw,
 source-system-style extracts -> run_validation.py flags the bad rows ->
-load.py loads everything EXCEPT what got flagged.
+load.py loads everything EXCEPT what got flagged. What counts as "clean"
+lives in clean_rows.py, shared with generate_receiving_raw.py so the two
+scripts can't quietly disagree on it.
 
 Business keys (supplier_name, sku) in the raw CSVs are resolved against
 master data already in the database (suppliers, products) to get the
@@ -17,48 +19,18 @@ quality log exists.
 Run from the project root:
     python -m python.etl.load
 """
-import sys
-from pathlib import Path
-
 import pandas as pd
 from sqlalchemy import text
 
-from config.settings import RAW_DATA_DIR, DATA_QUALITY_LOG_PATH
+from etl.clean_rows import load_raw_po_data, get_clean_po_lines
 from utils.db import get_engine
 
 
 def load_clean_rows():
     engine = get_engine()
 
-    headers_path = Path(RAW_DATA_DIR) / "purchase_orders_raw.csv"
-    lines_path = Path(RAW_DATA_DIR) / "purchase_order_lines_raw.csv"
-    quality_log_path = Path(DATA_QUALITY_LOG_PATH)
-
-    if not headers_path.exists() or not lines_path.exists():
-        sys.exit("Raw CSVs not found. Run 'python -m python.etl.generate_data' first.")
-    if not quality_log_path.exists():
-        sys.exit("Data quality log not found. Run 'python -m python.validation.run_validation' first.")
-
-    headers_df = pd.read_csv(headers_path, dtype=str)
-    lines_df = pd.read_csv(lines_path)
-    issues_df = pd.read_csv(quality_log_path)
-
-    # --- Split flagged record_ids back into header vs. line issues ---
-    # Header issues are flagged by bare po_number (e.g. "PO-2026-1010").
-    # Line issues are flagged as "po_number:sku" (e.g. "PO-2026-1000:PROD-SKU-1001").
-    bad_po_numbers = set(issues_df.loc[~issues_df["record_id"].str.contains(":"), "record_id"])
-    bad_line_ids = set(issues_df.loc[issues_df["record_id"].str.contains(":"), "record_id"])
-
-    # --- Clean headers: drop anything flagged at the header level ---
-    clean_headers = headers_df[~headers_df["po_number"].isin(bad_po_numbers)].copy()
-
-    # --- Clean lines: drop lines flagged directly, AND lines belonging to a bad header ---
-    lines_df["line_record_id"] = lines_df["po_number"] + ":" + lines_df["sku"]
-    clean_lines = lines_df[
-        ~lines_df["line_record_id"].isin(bad_line_ids)
-        & ~lines_df["po_number"].isin(bad_po_numbers)
-    ].copy()
-    clean_lines = clean_lines.drop(columns=["line_record_id"])
+    headers_df, lines_df, issues_df = load_raw_po_data()
+    clean_headers, clean_lines = get_clean_po_lines(headers_df, lines_df, issues_df)
 
     skipped_headers = len(headers_df) - len(clean_headers)
     skipped_lines = len(lines_df) - len(clean_lines)
@@ -110,13 +82,6 @@ def load_clean_rows():
         clean_lines["po_id"] = clean_lines["po_number"].map(po_number_to_id)
         clean_lines = clean_lines.merge(products, on="sku", how="inner")
 
-        unresolved_lines = len(
-            lines_df[
-                ~lines_df["po_number"].isin(bad_po_numbers)
-                & lines_df["po_number"].isin(po_number_to_id)
-            ]
-        ) - len(clean_lines)
-
         lines_to_insert = clean_lines[
             ["po_id", "product_id", "quantity_ordered", "quantity_received", "unit_cost"]
         ].dropna(subset=["po_id"])
@@ -134,4 +99,3 @@ def load_clean_rows():
 
 if __name__ == "__main__":
     load_clean_rows()
-    
