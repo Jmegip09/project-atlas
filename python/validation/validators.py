@@ -168,3 +168,88 @@ def run_all(headers_df: pd.DataFrame, lines_df: pd.DataFrame) -> pd.DataFrame:
         issues.extend(validator(lines_df))
 
     return pd.DataFrame(issues, columns=["record_id", "rule_id", "field", "value", "description"])
+
+
+# ---------------------------------------------------------------------------
+# Receiving event validators (receiving_events_raw.csv)
+# ---------------------------------------------------------------------------
+
+KNOWN_WAREHOUSE_CODES = {"WH-ORL-01", "WH-MIA-02", "WH-TPA-03"}
+
+
+def _receiving_record_id(row) -> str:
+    return f"{row['po_number']}:{row['sku']}:{row['event_number']}"
+
+
+def check_receiving_quantity_mismatch(df: pd.DataFrame) -> list[dict]:
+    bad = df[
+        df["quantity_accepted"] + df["quantity_damaged"] + df["quantity_rejected"]
+        != df["quantity_received"]
+    ]
+    return [
+        _issue(_receiving_record_id(row), "SCHEMA-chk_receiving_quality_breakdown",
+               "quantity_received", row["quantity_received"],
+               "Accepted + damaged + rejected does not equal quantity received.")
+        for _, row in bad.iterrows()
+    ]
+
+
+def check_receiving_negative_quantities(df: pd.DataFrame) -> list[dict]:
+    bad = df[
+        (df["quantity_accepted"] < 0) | (df["quantity_damaged"] < 0)
+        | (df["quantity_rejected"] < 0) | (df["quantity_received"] <= 0)
+    ]
+    return [
+        _issue(_receiving_record_id(row), "SCHEMA-chk_receiving_quality_nonnegative",
+               "quantity_damaged", row["quantity_damaged"],
+               "Receiving event has a negative or non-positive quantity.")
+        for _, row in bad.iterrows()
+    ]
+
+
+def check_receiving_before_order(df: pd.DataFrame) -> list[dict]:
+    df = df.copy()
+    df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
+    df["received_date"] = pd.to_datetime(df["received_date"], errors="coerce")
+    bad = df[df["received_date"] < df["order_date"]]
+    return [
+        _issue(_receiving_record_id(row), "LOGIC-received_before_ordered", "received_date",
+               row["received_date"], "Item was received before the PO was even ordered.")
+        for _, row in bad.iterrows()
+    ]
+
+
+def check_receiving_unknown_warehouse(df: pd.DataFrame) -> list[dict]:
+    bad = df[~df["warehouse_code"].isin(KNOWN_WAREHOUSE_CODES)]
+    return [
+        _issue(_receiving_record_id(row), "FK-warehouse_code", "warehouse_code",
+               row["warehouse_code"], "Warehouse code does not match any known warehouse.")
+        for _, row in bad.iterrows()
+    ]
+
+
+def check_receiving_duplicate_event(df: pd.DataFrame) -> list[dict]:
+    key = df["po_number"] + ":" + df["sku"] + ":" + df["event_number"].astype(str)
+    dupes = df[key.duplicated(keep=False)]
+    return [
+        _issue(_receiving_record_id(row), "SCHEMA-uq_receiving_po_line_event",
+               "event_number", row["event_number"],
+               "Duplicate receiving event for this PO line.")
+        for _, row in dupes.iterrows()
+    ]
+
+
+RECEIVING_VALIDATORS = [
+    check_receiving_quantity_mismatch,
+    check_receiving_negative_quantities,
+    check_receiving_before_order,
+    check_receiving_unknown_warehouse,
+    check_receiving_duplicate_event,
+]
+
+
+def run_receiving_validation(events_df: pd.DataFrame) -> pd.DataFrame:
+    issues = []
+    for validator in RECEIVING_VALIDATORS:
+        issues.extend(validator(events_df))
+    return pd.DataFrame(issues, columns=["record_id", "rule_id", "field", "value", "description"])
