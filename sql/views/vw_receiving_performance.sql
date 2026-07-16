@@ -7,6 +7,7 @@
 CREATE OR REPLACE VIEW vw_receiving_performance AS
 SELECT
     rt.receiving_id,
+    rt.event_number,
     w.warehouse_id,
     w.warehouse_name,
     w.location_city,
@@ -15,6 +16,9 @@ SELECT
     p.sku,
     p.product_name,
     rt.quantity_received,
+    rt.quantity_accepted,
+    rt.quantity_damaged,
+    rt.quantity_rejected,
     po.expected_delivery_date,
     rt.received_date,
     (rt.received_date::date - po.expected_delivery_date) AS days_late

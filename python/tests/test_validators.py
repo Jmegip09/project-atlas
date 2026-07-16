@@ -9,6 +9,11 @@ from validation.validators import (
     check_over_received,
     check_unknown_sku,
     check_zero_or_negative_cost,
+    check_receiving_quantity_mismatch,
+    check_receiving_negative_quantities,
+    check_receiving_before_order,
+    check_receiving_unknown_warehouse,
+    check_receiving_duplicate_event,
 )
 
 
@@ -69,3 +74,58 @@ def test_unknown_sku_flagged():
 def test_zero_cost_flagged():
     df = pd.DataFrame({"po_number": ["PO-1"], "sku": ["PROD-SKU-1001"], "unit_cost": [0]})
     assert len(check_zero_or_negative_cost(df)) == 1
+
+
+# ---------------------------------------------------------------------------
+# Receiving event validators
+# ---------------------------------------------------------------------------
+
+def _receiving_row(**overrides):
+    row = {
+        "po_number": "PO-2026-1000", "sku": "PROD-SKU-1001", "event_number": 1,
+        "order_date": "2026-06-01", "received_date": "2026-06-10",
+        "warehouse_code": "WH-ORL-01", "quantity_received": 100,
+        "quantity_accepted": 95, "quantity_damaged": 5, "quantity_rejected": 0,
+    }
+    row.update(overrides)
+    return row
+
+
+def test_receiving_quantity_mismatch_flagged():
+    df = pd.DataFrame([_receiving_row(quantity_received=110)])
+    assert len(check_receiving_quantity_mismatch(df)) == 1
+
+
+def test_receiving_quantity_breakdown_clean_passes():
+    df = pd.DataFrame([_receiving_row()])
+    assert len(check_receiving_quantity_mismatch(df)) == 0
+
+
+def test_receiving_negative_damaged_flagged():
+    df = pd.DataFrame([_receiving_row(quantity_damaged=-3, quantity_accepted=98, quantity_received=95)])
+    assert len(check_receiving_negative_quantities(df)) == 1
+
+
+def test_receiving_before_order_flagged():
+    df = pd.DataFrame([_receiving_row(received_date="2026-05-20")])  # before 2026-06-01 order_date
+    assert len(check_receiving_before_order(df)) == 1
+
+
+def test_receiving_unknown_warehouse_flagged():
+    df = pd.DataFrame([_receiving_row(warehouse_code="WH-XXX-99")])
+    assert len(check_receiving_unknown_warehouse(df)) == 1
+
+
+def test_receiving_known_warehouse_passes():
+    df = pd.DataFrame([_receiving_row()])
+    assert len(check_receiving_unknown_warehouse(df)) == 0
+
+
+def test_receiving_duplicate_event_flagged():
+    df = pd.DataFrame([_receiving_row(), _receiving_row()])
+    assert len(check_receiving_duplicate_event(df)) == 2
+
+
+def test_receiving_different_event_numbers_not_duplicate():
+    df = pd.DataFrame([_receiving_row(event_number=1), _receiving_row(event_number=2)])
+    assert len(check_receiving_duplicate_event(df)) == 0
