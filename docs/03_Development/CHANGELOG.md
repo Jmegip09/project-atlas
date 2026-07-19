@@ -6,7 +6,26 @@ This project follows Semantic Versioning principles.
 
 ---
 
-## [0.5.0] - ETL Pipeline Complete
+## [Unreleased]
+
+### Documentation
+
+- Replaced the placeholder ETL design with the implemented purchase order, receiving, and inventory-ledger workflow, including dependencies, failure behavior, and rerun guarantees.
+- Added the complete Python and PostgreSQL data-quality rule catalog, quarantine behavior, test coverage, and known control gaps.
+- Documented all three Power BI-facing SQL views, their grain, field semantics, and interpretation boundaries.
+- Rebuilt the Power BI requirements around the three pages in `ProjectAtlas.pbix` and recorded the remaining version 0.6 acceptance gaps.
+- Added an implementation-aligned KPI catalog with executable DAX examples and explicit metric limitations.
+- Corrected README setup order, added reporting-view deployment commands, and replaced the stale documentation overview.
+- Added implementation-aligned functional and non-functional requirements with stable IDs, acceptance criteria, status, evidence, and explicitly deferred scope.
+- Rebuilt the learning log as a milestone-based engineering journal covering schema design, ETL, validation, idempotency, CI, reporting grain, and documentation governance.
+
+### Added
+
+- `python/.env.example` with the supported PostgreSQL connection settings.
+
+---
+
+## [0.5.0] - 2026-07-16 - ETL Pipeline Complete
 
 ### Added
 
@@ -27,7 +46,7 @@ This project follows Semantic Versioning principles.
 
 #### Testing & CI
 
-- 17 pytest unit tests covering every validator
+- 17 pytest unit tests covering purchase order and receiving validation behavior
 - GitHub Actions workflow running the full test suite on every push
 - `pytest.ini` (`pythonpath = .`) so tests run identically from CI, terminal, and IDE test runners
 
@@ -50,27 +69,43 @@ This project follows Semantic Versioning principles.
 
 ---
 
-## [0.1.0] - Repository Foundation
+## [0.1.0] - 2026-07-07 - Repository Foundation
 
 ### Added
 
 #### Repository Foundation
-...
+
+- Created the Project Atlas GitHub repository.
+- Established the functional directory structure for SQL, Python, Power BI, data, diagrams, documentation, and GitHub workflows.
+- Configured semantic versioning, changelog practices, and placeholder preservation for empty directories.
 
 #### Business Documentation
-...
+
+- Defined the fictional Atlas Distribution Company and the project's business context.
+- Added product vision, business requirements, stakeholders, success metrics, process flows, events, and initial business rules.
+- Established requirement and business-rule ID conventions using the `ATLAS-` prefix.
 
 #### Architecture Documentation
-...
+
+- Added the initial system architecture, ERD, data dictionary, data classification, and architecture decision records.
+- Documented the separation between master, transactional, analytical, and reporting data.
+- Established the layered PostgreSQL → Python ETL → SQL views → Power BI architecture.
 
 #### SQL Documentation
-...
+
+- Added the initial PostgreSQL schema, constraint, index, and seed-data structure.
+- Separated database objects into modular deployment scripts.
+- Added documentation locations for schema, indexes, views, and future stored procedures.
 
 #### ETL Documentation
-...
+
+- Established documentation locations for ETL design and data-quality controls.
+- Defined the planned raw → validate → transform → load workflow.
 
 #### Business Intelligence Documentation
-...
+
+- Added the initial dashboard requirements and KPI catalog structure.
+- Defined Power BI as the presentation layer over curated SQL views.
 
 #### Development Environment
 
@@ -90,7 +125,7 @@ This project follows Semantic Versioning principles.
 
 ---
 
-### Planned for v0.2.0
+### Planned Next
 
 - Complete Business Analysis
 - Build ER Diagram
