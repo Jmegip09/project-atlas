@@ -1,199 +1,201 @@
-<!-- placeholder -->
-# DASHBOARD_REQUIREMENTS.md
+# Power BI Dashboard Requirements
 
 ## Purpose
 
-This document defines the business intelligence and reporting requirements for Project Atlas.
+This document defines the current Power BI reporting scope for Project Atlas and the acceptance criteria for version 0.6. It replaces the earlier five-dashboard concept with the three-page report implemented in `powerbi/ProjectAtlas.pbix`.
 
-It identifies the dashboards, KPIs, business questions, target users, and supporting datasets required to transform operational data into meaningful business insights.
-
-Dashboard requirements are derived directly from the project's Business Requirements, Functional Requirements, and Business Process Flow to ensure every visualization supports a measurable business objective.
+The dashboard is a presentation layer over validated PostgreSQL reporting views. It must not recreate operational joins or invent metrics that the current data model cannot support.
 
 ---
 
-# Dashboard Design Principles
+## Report Scope
 
-Project Atlas dashboards are designed to:
+| Page | Reporting View | Primary Audience | Primary Decision |
+|---|---|---|---|
+| Supplier Scorecard | `vw_supplier_performance` | Procurement and supply chain leadership | Which suppliers create planning or spend concentration risk? |
+| Inventory Risk | `vw_inventory_status` | Inventory control and warehouse operations | Which warehouse-SKU positions require replenishment attention? |
+| Receiving & Quality | `vw_receiving_performance` | Warehouse operations and procurement | Where are receipts late, damaged, or rejected? |
 
-- Support business decision-making.
-- Present accurate and trustworthy operational data.
-- Reduce manual reporting.
-- Highlight actionable insights rather than raw data.
-- Maintain consistency across all reporting views.
+Each page uses one reporting view. Cross-page relationships are not required for version 0.6.
 
 ---
 
-# Planned Dashboards
+## Design Principles
 
-## ATLAS-DB-001 — Executive Dashboard
+The report shall:
+
+- Use reporting views from `sql/views/` as its only data sources.
+- Preserve the grain documented in `docs/04_SQL/VIEWS.md`.
+- Use KPI definitions from `KPI_CATALOG.md`.
+- Prefer explicit measures for cards and reusable calculations.
+- Apply business-friendly titles while retaining snake-case source names in the data model.
+- Make risk and exception states visually distinct without relying on color alone.
+- Use sortable detail tables so every summary can be investigated.
+- Avoid presenting planned lead-time variance as actual delivery performance.
+
+---
+
+## Page 1 — Supplier Scorecard
 
 ### Purpose
 
-Provide executive leadership with a high-level overview of company-wide operational performance.
-
-### Target Users
-
-- Executive Leadership
-- Operations Director
-- Supply Chain Leadership
+Compare supplier purchasing volume, planned lead time, and purchase order value.
 
 ### Business Questions
 
-- How healthy is our inventory?
-- What is the total inventory value?
-- Are suppliers meeting expectations?
-- Which warehouses require attention?
-- Are inventory discrepancies increasing?
+- How many suppliers are represented?
+- Which suppliers have planned lead times above their quoted lead time?
+- Which suppliers carry the largest purchase order value?
+- Which suppliers have no current purchase order activity?
 
-### Planned KPIs
+### Required Visuals
 
-- Total Inventory Value
-- Inventory Accuracy %
-- Inventory Turnover
-- Stockout Rate
-- Supplier On-Time Delivery %
-- Purchase Orders by Status
-- Inventory Adjustments
-- Warehouse Utilization
+| Visual | Definition | Acceptance Criteria | Current State |
+|---|---|---|---|
+| Card — Total Suppliers | Distinct count of `supplier_id` | Includes suppliers with zero purchase orders | Not yet implemented |
+| Card — Average Supplier Lead-Time Variance | Average of `avg_days_over_quoted_lead_time` | Labeled as an unweighted supplier average, formatted to one decimal day | Not yet implemented |
+| Horizontal bar chart | `avg_days_over_quoted_lead_time` by `supplier_name` | Average aggregation; sorted highest to lowest; title states "planned" or "quoted" lead-time variance | Implemented |
+| Supplier detail table | Supplier name, status, quoted lead time, total POs, average planned lead time, variance, and PO value | Currency and day formatting applied; sortable by every visible column | Partially implemented — supplier status is not displayed |
+
+### Interpretation Guardrail
+
+This page does not measure actual on-time delivery. Its lead-time metric compares purchase order planning dates with supplier master-data lead time. Actual receipt timing belongs on the Receiving & Quality page.
 
 ---
 
-## ATLAS-DB-002 — Warehouse Operations Dashboard
+## Page 2 — Inventory Risk
 
 ### Purpose
 
-Monitor warehouse activity and operational efficiency.
-
-### Target Users
-
-- Warehouse Managers
-- Warehouse Supervisors
+Identify current warehouse-product balances at or below their defined safety-stock level.
 
 ### Business Questions
 
-- Which warehouse is receiving the most inventory?
-- Which warehouse has the highest workload?
-- Which products require replenishment?
-- Are inventory balances accurate?
+- How many warehouse-SKU positions are at stockout risk?
+- Which products have the largest safety-stock shortfall?
+- Which warehouses contain the greatest concentration of at-risk positions?
+- How much inventory is currently available at each warehouse?
 
-### Planned KPIs
+### Required Visuals
 
-- Quantity on Hand
-- Receiving Activity
-- Inventory Movements
-- Low Stock Alerts
-- Overstock Items
-- Warehouse Transfers
-- Cycle Count Variance
+| Visual | Definition | Acceptance Criteria | Current State |
+|---|---|---|---|
+| Card — At-Risk Warehouse-SKU Locations | Count of rows where `is_at_stockout_risk = TRUE` | Uses a warehouse-SKU label unless changed to a distinct SKU count | Implemented; current title should be made more precise |
+| At-risk detail table | Warehouse, product, SKU, quantity on hand, safety stock, and units above safety stock | Filtered to `TRUE`; sorted by `units_above_safety_stock` ascending so the deepest shortfall appears first | Partially implemented — risk filter is present; the required shortfall sort is not encoded |
+| Bar chart — At-Risk Locations by Warehouse | Count of at-risk warehouse-product rows by `warehouse_name` | Filtered to `TRUE`; sorted highest to lowest | Needs adjustment — current visual shows quantity on hand split by risk flag |
+
+### Interpretation Guardrail
+
+`is_at_stockout_risk` is a safety-stock threshold flag. It is not a forecasted stockout probability and does not account for demand, open purchase orders, or transfer inventory.
 
 ---
 
-## ATLAS-DB-003 — Procurement Dashboard
+## Page 3 — Receiving & Quality
 
 ### Purpose
 
-Measure supplier performance and purchasing effectiveness.
-
-### Target Users
-
-- Procurement Managers
-- Buyers
+Monitor receipt volume, delivery timing, and inspection outcomes by warehouse and supplier.
 
 ### Business Questions
 
-- Which suppliers consistently deliver late?
-- Which suppliers provide the most inventory?
-- What purchase orders remain open?
-- How are purchasing costs trending?
+- How many receipt events occurred?
+- Are receipts arriving before or after their expected delivery date?
+- Which warehouses record the most late receiving events?
+- Which suppliers account for damaged or rejected units?
 
-### Planned KPIs
+### Required Visuals
 
-- Supplier On-Time Delivery %
-- Open Purchase Orders
-- Average Lead Time
-- Purchase Spend
-- Purchase Orders by Supplier
-- Late Deliveries
+| Visual | Definition | Acceptance Criteria | Current State |
+|---|---|---|---|
+| Card — Receiving Events | Count of `receiving_id` | Labeled as events, not purchase orders | Implemented |
+| Card — Average Delivery Variance | Average of `days_late` | Positive is late, negative is early; formatted to one decimal day | Implemented in the same card visual |
+| Bar chart — Late Receiving Events by Warehouse | Count of receiving rows where `days_late > 0`, grouped by `warehouse_name` | Late-event filter applied; sorted highest to lowest | Needs adjustment — current visual counts all receiving events |
+| Stacked bar chart — Receipt Quality by Supplier | Sum of accepted, damaged, and rejected quantities by `supplier_name` | Uses consistent outcome colors and whole-number labels | Implemented |
 
----
+### Quantity Reconciliation
 
-## ATLAS-DB-004 — Inventory Control Dashboard
+For every filter context:
 
-### Purpose
+```text
+Gross Received Units = Accepted Units + Damaged Units + Rejected Units
+```
 
-Support inventory reconciliation and inventory accuracy initiatives.
-
-### Target Users
-
-- Inventory Control Analysts
-
-### Business Questions
-
-- Where are inventory discrepancies occurring?
-- Which products require cycle counts?
-- What inventory adjustments were made?
-- Which warehouses have the highest inventory variance?
-
-### Planned KPIs
-
-- Inventory Accuracy %
-- Cycle Count Variance
-- Inventory Adjustments
-- Negative Inventory Exceptions
-- Inventory Aging
-- Reorder Alerts
+Only accepted units enter sellable inventory. The dashboard should never combine gross received units and accepted units as though they were additive measures.
 
 ---
 
-## ATLAS-DB-005 — Supplier Performance Dashboard
+## Filters and Interactions
 
-### Purpose
+Version 0.6 should support filtering where the source view contains the field:
 
-Evaluate supplier reliability and operational performance.
+- Supplier name
+- Supplier status
+- Warehouse name
+- Location city
+- Product category
+- SKU
+- Expected delivery date
+- Received date
 
-### Target Users
-
-- Procurement
-- Supply Chain Leadership
-
-### Business Questions
-
-- Which suppliers consistently meet delivery expectations?
-- Which suppliers create operational risk?
-- Which suppliers require performance improvement?
-
-### Planned KPIs
-
-- On-Time Delivery %
-- Average Delivery Delay
-- Orders Completed
-- Partial Deliveries
-- Supplier Rating
+Visual selections should cross-filter visuals on the same page. Because the report uses one independent view per page, filters are page-scoped unless a future semantic model introduces shared dimensions.
 
 ---
 
-# Dashboard Standards
+## Formatting Standards
 
-All dashboards shall:
+| Data Type | Standard |
+|---|---|
+| Counts and quantities | Whole numbers with thousands separators |
+| Currency | U.S. dollars with thousands separators and no unnecessary decimals |
+| Day variance | One decimal place; preserve negative values for early performance |
+| Percentages | One decimal place |
+| Boolean risk | Display as business labels such as `At Risk` and `Above Safety Stock` |
+| Dates | Consistent short-date format |
 
-- Use consistent naming conventions.
-- Display clearly defined KPIs.
-- Support drill-down analysis where applicable.
-- Refresh using validated data.
-- Follow standardized color and formatting guidelines.
-- Be optimized for executive and operational decision-making.
+Risk colors should remain consistent across the report. Red indicates an exception or adverse result, amber indicates attention, and neutral/blue indicates context or acceptable performance. Text labels and sort order must carry the meaning when colors are not distinguishable.
 
 ---
 
-# Traceability
+## Data Refresh and Validation
 
-Every dashboard shall map directly to:
+Before refreshing Power BI:
 
-- Business Requirements
-- Functional Requirements
-- SQL Views
-- Database Tables
-- ETL Processes
-- Business KPIs
+1. Run both validation stages and confirm their quality logs exist.
+2. Load clean purchase order and receiving data.
+3. Recompute `inventory_balances` from `inventory_transactions` through `load_receiving.py`.
+4. Confirm all three reporting views return rows.
 
-No dashboard should exist without a defined business purpose.
+After refresh, validate:
+
+- Supplier totals against `vw_supplier_performance`.
+- At-risk location count against `vw_inventory_status` filtered to `TRUE`.
+- Receipt counts and quantity reconciliation against `vw_receiving_performance`.
+- No visual is using an unintended implicit aggregation.
+- Early receipts are not mislabeled as zero-day or late receipts.
+
+---
+
+## Version 0.6 Acceptance Criteria
+
+The Power BI phase is complete when:
+
+- All three pages refresh without schema or credential errors.
+- Every required visual is implemented and correctly labeled.
+- Every item marked not implemented, partially implemented, or needing adjustment in the current-state tables is resolved.
+- KPI results reconcile to PostgreSQL.
+- Dashboard screenshots are added to the repository for portfolio review.
+- README, changelog, release notes, and version history are updated to v0.6.0.
+
+Metrics requiring unimplemented entities—such as inventory turnover, cycle-count variance, warehouse utilization, and true demand-based stockout rate—remain outside version 0.6.
+
+---
+
+## Traceability
+
+| Dashboard Page | Reporting Contract | Primary Business Rules |
+|---|---|---|
+| Supplier Scorecard | `vw_supplier_performance` | `ATLAS-RULE-001`, `ATLAS-RULE-015` |
+| Inventory Risk | `vw_inventory_status` | `ATLAS-RULE-007`, `ATLAS-RULE-008`, `ATLAS-RULE-009`, `ATLAS-RULE-015` |
+| Receiving & Quality | `vw_receiving_performance` | `ATLAS-RULE-004`, `ATLAS-RULE-005`, `ATLAS-RULE-006`, `ATLAS-RULE-015` |
+
+Data quality rules and rejected-row handling are documented in `docs/05_ETL/DATA_QUALITY_RULES.md`.
